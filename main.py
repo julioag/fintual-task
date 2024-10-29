@@ -8,7 +8,7 @@ class Stock:
         self.data = yf.Ticker(symbol)
 
     def price(self, date):
-        end_date = datetime.datetime.strptime(date, '%Y-%m-%d') + datetime.timedelta(days=10)
+        end_date = date + datetime.timedelta(days=10)
         historical_price = self.data.history(start=date, end=end_date.strftime('%Y-%m-%d'))
         if historical_price.empty:
             raise ValueError(f"No data available for {self.symbol} on {date}")
@@ -29,13 +29,16 @@ class Portfolio:
             return 0
 
     def profit(self, dates):
-        start_date = dates[0]
-        end_date = dates[1]
+        start_date = datetime.datetime.strptime(dates[0], '%Y-%m-%d')
+        end_date = datetime.datetime.strptime(dates[1], '%Y-%m-%d')
+        days_between = (end_date - start_date).days
         profits_per_stock = {stock.symbol: self.profit_from_stock(i, start_date, end_date) for i, stock in enumerate(self.stocks)}
-        total_profit = sum(profits_per_stock.values()) / len(self.stocks)
+        total_profit = sum(profits_per_stock.values()) / len(profits_per_stock)
+        annualized_return = (1 + total_profit) ** (365/days_between) - 1
         return {
             'profits_per_stock': profits_per_stock,
-            'total_profit': total_profit
+            'total_profit': total_profit,
+            'annualized_return': annualized_return
         }
 
 
@@ -76,3 +79,4 @@ if __name__ == "__main__":
     for symbol, profit in profits['profits_per_stock'].items():
         print(f"{symbol}: {profit*100:.2f}%")
     print(f"\nTotal portfolio profit: {profits['total_profit']*100:.2f}%")
+    print(f"\nPorfolio annualized return: {profits['annualized_return']*100:.2f}%")

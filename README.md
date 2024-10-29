@@ -4,8 +4,16 @@ A Python tool to calculate stock portfolio profits using historical market data 
 
 ## Features
 - Calculate profits for multiple stocks between two dates
+- Calculate annualized returns for better performance comparison
 - User-friendly command line interface
 - Percentage-based profit calculations per stock and total portfolio
+
+## Calculations
+The tool provides two key metrics:
+- Regular profit: ((end_price - start_price) / start_price)
+- Annualized return: (1 + total_profit)^(365/days_between_dates) - 1
+
+The annualized return normalizes the profit over a year period, making it easier to compare investments held for different lengths of time.
 
 ## Requirements
 - Python 3.9+
